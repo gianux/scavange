@@ -1,12 +1,19 @@
-#after clone run in the command line:
+#run in the command line:
 
 bundle install
 
-# run the test
+#run the test
 
 rake spec     
 
-#run the first 100 of the alexa1M file
+#change the lib/finder.rb 
+scavate your thing! Creates a server named "BaseX#{given_name}" whith the results that pass 
+the block rules against the @document response, like that :
+
+finder "give_name" { @document.match "word" and @document.match "another word, etc" } 
+
+
+#run the first 100 of the alexa1M.txt to scavate something
 
 rake 100by10 
 
