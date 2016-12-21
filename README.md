@@ -2,12 +2,21 @@
 
 bundle install
 
-rake spec    # run the test 
+# run the test
 
-rake 100by10 # run the first 100 of the alexa1M file
+rake spec     
 
-#in another terminal open the irb console an write:
+#run the first 100 of the alexa1M file
 
-laod 'monitorize.rb'
+rake 100by10 
+
+#to see waths going on open the irb console an write:
+
+laod 'irb/monitorize.rb'
 
 Monitorize.now
+
+
+#to run the 1000000 write:
+
+rake run1000000
