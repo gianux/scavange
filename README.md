@@ -7,7 +7,7 @@ bundle install
 rake spec     
 
 #change the lib/finder.rb 
-scavate your thing! Creates a server named "BaseX#{given_name}" whith the results that pass 
+creates a server named "BaseX#{given_name}" whith the results that pass 
 the block rules against the @document response, like that :
 
 finder "give_name" { @document.match "word" and @document.match "another word, etc" } 
