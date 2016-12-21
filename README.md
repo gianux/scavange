@@ -2,7 +2,7 @@
 
 bundle install
 
-#run the test
+#run the spec
 
 rake spec     
 
