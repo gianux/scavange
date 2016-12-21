@@ -1,4 +1,4 @@
-clone this just for Linux Ubunto
+clone this just for Linux Ubuntu
 
 #run in the command line:
 
