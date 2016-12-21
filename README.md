@@ -1,3 +1,5 @@
+clone this just for Linux Ubunto
+
 #run in the command line:
 
 bundle install
