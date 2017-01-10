@@ -1,6 +1,8 @@
-#clone this just for Linux
+#clone for Linux/Ubuntu
 
-#run in the command line:
+git clone https://github.com/gianux/scavange.git
+
+#install the gems:
 
 bundle install
 
@@ -8,24 +10,28 @@ bundle install
 
 rake spec     
 
-#change the lib/finder.rb 
-creates a server named "BaseX#{given_name}" whith the results that pass 
-the block rules against the @document response, like that :
+#change the file/fwords.txt or give a new one 
 
-finder "give_name" { @document.match "word" and @document.match "another word, etc" } 
+vim file/fwords.txt
 
+#run scavate with aguments( head, tail, division, file_sites, file_words ), example:
 
-#run the first 100 of the alexa1M.txt to scavate something
+rake www:scavate[1,100,10,"file/alexa1M.txt","file/fwords.txt"]
 
-rake 100by10 
+( arg division=10 to fragment file_sites in http requests )
 
-#to see waths going on open the irb console an write:
+#to scavate 1000000:
 
-laod 'irb/monitorize.rb'
+rake www:scavate1M
 
-Monitorize.now
+( implicit arguments: head = 1, tail = 1000000, division = 3500, file_sites = file/alexa1M.txt, file_words = file/fwords.txt )
 
+#to scavate 100:
 
-#to run the 1000000 write:
+rake www:scavate100by10
 
-rake run1000000
+( implicit arguments: head = 1, tail = 100, division = 10, file_sites = file/alexa1M.txt, file_words = file/fwords.txt )
+
+#to monitorize results, open the irb console an write:
+
+laod 'irb/monitorize.rb' ; Monitorize.now
