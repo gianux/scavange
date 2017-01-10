@@ -1,5 +1,12 @@
 require_relative "finder_helper.rb"
 
-finder( w1 = "zagreb") { @document =~ /#{w1}/i }
+Finder = Module.new do
 
-finder( w2 = "portuga" ) { @document =~ /#{w2}/i }
+    define_method :set_words_list do |a = [] |
+
+        a.map { |word| finder( "#{word}") { @document =~ /#{word}/i } }
+
+    end
+
+    extend self
+end

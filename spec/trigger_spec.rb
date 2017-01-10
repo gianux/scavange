@@ -51,7 +51,7 @@ RSpec.describe "BaseXtrigger takes from tuple, and writes n array's for the XCli
         end
     end
 end
-RSpec.describe "XClient take then writes to BaseXdivparams and spawn MultiDetect n times" do
+RSpec.describe "XClient take then writes to BaseXdivparams and spawn Detector n times" do
     describe XClient, "#run" do
         it "takes the values from this tuple, and write to BaseXdivparams by calling run" do
             XClient.new.run 
@@ -59,7 +59,7 @@ RSpec.describe "XClient take then writes to BaseXdivparams and spawn MultiDetect
 
         describe BaseXdivparams, "keeps and write the values to monitorize whith the signal" do
             b=""
-            it "take and keepis the values from this tuple by calling run" do
+            it "take and keeps the values from this tuple by calling run" do
                 ( b = BaseXdivparams.new ).run[1] 
             end
             describe Monitorize, "#xxdivparams_pass_values" do
@@ -76,11 +76,13 @@ RSpec.describe "XClient take then writes to BaseXdivparams and spawn MultiDetect
     end
     describe Process, "#spawn" do
         before do
-            CMDAPIFILE ="ruby " + ( `pwd` ).chomp.concat("/lib/start_detector.rb ")
+            @CMDAPIFILE = proc {|site| 
+                "ruby lib/start_detector.rb #{site} true true 'from detector.rb to monit' '{:BaseX302=>33302, :BaseX200=>67890}' 'https'"
+            }
         end
         describe Process, "#spawn for status 302" do
             it "spawns 'ruby start_detector.rb [ google.com ] ... with param FLAG302: true" do
-                Process.spawn CMDAPIFILE + '[\"google.com\"] true true "from detector.rb to monit" "{:BaseX302=>33302, :BaseX200=>67890, :BaseXerr=>98989, :BaseXportuga=>11111}" https'
+                Process.spawn( @CMDAPIFILE.call '[\"google.com\"]' )
             end
             describe Detector, "#scavange" do
                 it "write to BaseX302 by calling scavange" do
@@ -90,7 +92,7 @@ RSpec.describe "XClient take then writes to BaseXdivparams and spawn MultiDetect
         end
         describe Process, "#spawn for status 200" do
             it "spawns 'ruby start_detector.rb [ google.pt ] ... with param FLAG200: true" do
-                Process.spawn CMDAPIFILE + '[\"google.pt\"] true true "from detector.rb to monit" "{:BaseX302=>33302, :BaseX200=>67890, :BaseXerr=>98989, :BaseXportuga=>11111}" https'
+                Process.spawn( @CMDAPIFILE.call '[\"google.pt\"]' )
             end
             describe Detector, "#scavange" do
                 it "write to BaseX200 by calling scavange" do
@@ -102,7 +104,7 @@ RSpec.describe "XClient take then writes to BaseXdivparams and spawn MultiDetect
 end
 RSpec.describe "... whaiting for writes " do
             it "5 seconds" do
-                sleep 10
+                sleep 5
             end
 end
 RSpec.describe "BaseX302 takes from tuple, keeps and write the values to monitorise whith the signal" do
@@ -133,53 +135,51 @@ end
 
 %w[ trigger divparams 200 302 ].each { |s| 
 
-    @b = @c = Class
-
     RSpec.describe "write_#{s}_values testing last value with signal" do
 
         v = "it passes any values"
 
         before do
 
-            name = instance_eval "(@b ||= X#{s}_values.new).class.name.to_sym"
+            name = instance_eval "(@V ||= X#{s}_values.new).class.name.to_sym"
 
             value = Table.take[name] = proc { v }
 
-            write = @b.run
+            write = @V.run
 
             signal = Table.take[name] = proc { 0 }
         end
 
         describe instance_eval "X#{s}_values", "#run" do
             it "take the signal and write the last value" do
-                expect( @b.run[1] ).to eq( v )
+                expect( @V.run[1] ).to eq( v )
             end
             it "holds the @last value" do
-                expect( @b.instance_eval "@last" ).to eq( v )
+                expect( @V.instance_eval "@last" ).to eq( v )
             end
         end
     end
 
     RSpec.describe "write_#{s}_counts testing last value with signal" do
 
-        v = 1
+        c = 1
 
         before do
 
-            name = instance_eval "(@c ||= X#{s}_counts.new).class.name.to_sym"
+            name = instance_eval "(@C ||= X#{s}_counts.new).class.name.to_sym"
 
-            value = Table.take[name] = proc { v }
+            value = Table.take[name] = proc { c }
 
-            write = @c.run
+            write = @C.run
             
             signal = Table.take[name] = proc { 0 }
         end
         describe instance_eval "X#{s}_counts", "#run" do
             it "take the signal and write the value" do
-                expect( a = @c.run[1] ).to eq( v )
+                expect( a = @C.run[1] ).to eq( c )
             end
             it "holds the @last value" do
-                expect( @c.instance_eval "@last" ).to eq( v )
+                expect( @C.instance_eval "@last" ).to eq( c )
             end
         end
     end

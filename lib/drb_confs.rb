@@ -3,7 +3,7 @@ module DRBConfs
     HOST = "druby://localhost:"
     DETECTOR = "start_detector.rb"
     CLIENT = "start_xclient.rb"
-    BASES = %w[ start_rinda_service.rb start_server_run.rb ]
+    BASES = %w[ start_server_run.rb ]
 
     DTMSG = "from detector.rb to monit" 
     CLIMSG = "from client.rb to monit"

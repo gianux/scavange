@@ -1,12 +1,20 @@
+require 'drb/drb'
+require 'rinda/tuplespace'
+
 require_relative 'server_run.rb' 
 
-module ServerLoop
+module Param
     ARGV[0] ? ( TARGET = ARGV[0].to_sym ) : false
-    ARGV[1] ? ( PORT = ARGV[1].to_i ) : false
 end
 
-module Param
-    ARGV[2] ? ( FILENAME = ARGV[2] ) : false
+rs = Object 
+rs.extend Server::DRbServerObj 
+
+rport = rs.port( Param::TARGET )
+
+begin 
+    DRb.start_service("#{Loaded::HOST}#{rport}", Rinda::TupleSpace.new )
+rescue => exception
 end
 
 r = ServerRun.new.main_loop 

@@ -1,15 +1,15 @@
 require_relative 'match_context.rb'
 
 module Context 
-    extend self
-    S = proc { |s| "obj.context_tb( obj.class::WORDS, &b ) #{s} obj.target_matchbase?" }
+    sp = proc { |s| "obj.context_tb( obj.class::WORDS, &b ) #{s} obj.target_matchbase?" }
 
     [ :if, :unless ].map { |w| 
-        define_method "match_#{w}base" do |obj, &b| instance_eval S.call( w ) end
+        define_method "match_#{w}base" do |obj, &b| instance_eval sp.call( w ) end
     }
     [ :take, :write, :counts, :reaction ].map { |w|
         define_method w do |c={}| c && ( instance_eval "Table.#{w}=c" ) end
     }
+    extend self
 end
 module MonitContextTake
     def any_server_take &block

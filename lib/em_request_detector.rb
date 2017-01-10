@@ -19,7 +19,9 @@ module DtStatus
 
   define_method :em_reset_status do status = 0 end
   define_method :em_status do self.em_request.response_header.status end
+
   private
+
   define_method :my_status do status end
   define_method :set_my_status do status = self.em_status end
 
@@ -56,10 +58,10 @@ module Server
 
     end
     module DtMulti 
-        extend self
-
         multi = Object
         define_method :em_init_multi do multi = EventMachine::MultiRequest.new end 
         define_method :em_multi do multi end 
+
+        extend self
     end
 end

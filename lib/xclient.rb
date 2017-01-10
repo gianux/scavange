@@ -36,7 +36,7 @@ class XClient
         Table.xcli_write[ my.name ] = w if CLICONF
     end
     def initialize 
-        DRb.start_service && load_tables
+        load_tables
     end
     def description h=my.heads, t=my.tails, d=my.value.count
         "#{h} #{t} count:#{d}"
@@ -45,8 +45,10 @@ class XClient
         tb = Load::BASE.keys.inject({}){|t,k| 
                                     ( t[k] = Loaded.ld_base( k )[:port] )if Loaded.ld_base( k )[:msg] == Loaded::DTMSG ; t }
     end
-    def run_detector t = table_sport_param, a = my.value, dir = Loaded::APIDIR, rb = Loaded::DETECTOR
-        r = "ruby #{dir}/#{rb} '#{a}' #{CONF200} #{CONF302} '#{Loaded::DTMSG}' '#{t}' #{Param::FOLLOWDIRECTION}" 
+    def run_detector t = table_sport_param, a = my.value, dir = Loaded::APIDIR, rb = Loaded::DETECTOR,
+                     c200 = CONF200, c302 = CONF302, msg = Loaded::DTMSG, p = Param::XCLIENT[:fdirection]
+
+        r = "ruby #{dir}/#{rb} '#{a}' #{c200} #{c302} '#{msg}' '#{t}' #{p}" 
         Process.spawn r
     end
     def value_in_tuple v = obj_take.tuple.take( [ Loaded::TRIGGMSG, my.heads, my.tails, nil] )
@@ -61,7 +63,7 @@ class XClient
     def take  v = value { keep }, &block
         v ? block.call : nil
     end
-    def reaction d = Param::DIVI, h = Param::HEAD, t = Param::TAIL, 
+    def reaction p = Param::XCLIENT, d = p[:divi], h = p[:head], t = p[:tail],
                  r = self.base_react( divi: d, head: h, tail: t ) { |head, tail, id| 
                         my.heads = head ;
                         my.tails = tail ;

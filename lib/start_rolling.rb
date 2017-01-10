@@ -7,10 +7,21 @@ require_relative 'redis_confs.rb'
 require_relative 'rolling.rb'
 
 module Param
-    ARGV[0] ? ( STARTN = ARGV[0] ) : "1"
-    ARGV[1] ? ( UNIVERSE = ARGV[1] ) : "1"
-    ARGV[2] ? ( DIVISION = ARGV[2] ) : "1"
-    ARGV[3] ? ( FILENAME = ARGV[3] ) : "_file"
+
+    ARGV.any? ? ( argv = ARGV ) : ( argv = Array.new(5) )
+
+    ROLLING = { head: argv[0].to_i, tail: argv[1].to_i, divi: argv[2].to_i, sitesfile: argv[3], wordsfile: argv[4] } 
+
 end
+
+RedisConfs.set_confs { |rs| 
+
+    rs.files Param::ROLLING
+
+    rs.cli [:values]  
+    rs.dt302 [:values, :counts]  
+
+    rs.react302 true
+}
 
 r = Rolling.new.start

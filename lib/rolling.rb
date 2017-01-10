@@ -44,37 +44,36 @@ class Rolling
     include Server::CheckRollingParams
     include MyTupleParams
 
-    def start
-        check_params ? [ :servers_up, :client_up, :start_rolling ].map { |method_name| send "#{method_name}" } : false
+    def start 
+        [ :servers_up, :client_up, :start_rolling ].map { |method_name| send "#{method_name}" } 
     end
 
     private
 
-    def initialize
-        DRb.start_service
+    def initialize p = Param::ROLLING
+        check_params( p ) 
     end
-    def check_params
-        self.head = Param::STARTN.to_i
-        self.tail = Param::UNIVERSE.to_i
-        self.divi = Param::DIVISION.to_i
-        self.file = Param::FILENAME
+    def check_params p
+        self.head = p[:head]
+        self.tail = p[:tail]
+        self.divi = p[:divi]
+        self.file = p[:wordsfile]
+        self.file = p[:sitesfile]
     end
-    def servers_up ports = Loaded.ld_servers_ports.uniq, file_name = Param::FILENAME, dir = Loaded::APIDIR
+    def servers_up xs = Loaded.ld_confservers, file_name = self.file, dir = Loaded::APIDIR
         RUN.map { |rb| 
             sleep 1
-            ports.map { |server_and_port| 
-                Process.spawn "ruby #{dir}/#{rb} #{server_and_port} #{file_name}" 
-            }
+            xs.map { |xserver| Process.spawn "ruby #{dir}/#{rb} #{xserver}" }
         }
     end
-    def client_up rb = CLI, d = Param::DIVISION, h = Param::STARTN, t = Param::UNIVERSE, 
+    def client_up rb = CLI, d = self.divi, h = self.head, t = self.tail, 
                   p = PORT, p302 = PORT302, dir = Loaded::APIDIR
         sleep 3 
         Process.spawn "ruby #{dir}/#{rb} #{d} #{h} #{t} #{p} https"
-        Process.spawn "ruby #{dir}/#{rb} 1 #{h} #{t} #{p302} http"
+        Process.spawn "ruby #{dir}/#{rb} 1 1 #{t} #{p302} http" if Loaded.ld_detectconf( :Detector )[ :BaseX302 ].any?
     end
 
     def start_rolling
-        TUPLE.write( [ MSG, Param::STARTN, Param::UNIVERSE, Param::DIVISION ] )
+        TUPLE.write( [ MSG, "#{self.head}", "#{self.tail}", "#{self.divi}" ] )
     end
 end

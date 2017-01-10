@@ -4,7 +4,7 @@ module CliDrb
     include XDRbServerObj 
 
     def current_port 
-        Param::PORT
+        Param::XCLIENT[:port]
     end
     def monit_port
         Loaded.ld_base( MONITSERVER )[:port] 
@@ -16,7 +16,7 @@ module CliDrb
 
     CLICONF = Loaded.ld_cliconf( :"#{ myconf.keys.first }" )[MONITSERVER].any?
     CONF200 = Loaded.ld_detectconf( :"#{dt}" )[ :BaseX200 ].any?
-    CONF302 = Loaded.ld_detectconf( :"#{dt}" )[ :BaseX302 ].any?
+    CONF302 = ( Loaded.ld_detectconf( :"#{dt}" )[ :BaseX302 ].any? || Configs::REACT_302 )
 
     private
     p, t  = nil

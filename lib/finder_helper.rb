@@ -5,16 +5,17 @@ module Kernel
     _finder = {}
     define_method :finder do |f, &block| _finder[f] = block end 
 
-    private
+    private 
     define_method :get_finder do _finder end
 end
 
 module Loaded
     include DRBConfs
     include APIConfs
-    extend self
 
     def x_sym name, x = "X" ; "Base#{x}#{name}".to_sym end
+
+    extend self
 end
 
 module XBaseReaction
@@ -24,9 +25,7 @@ module XBaseReaction
 end 
 
 module XDRbServerObj
-    extend self
-
-    def drb_base name, p = self.port( name )
+    def drb_base name, p 
         uri p 
     end
     def uri_monit; uri Loaded::MONITPORT end
@@ -35,25 +34,31 @@ module XDRbServerObj
     def uri p 
         DRbObject.new_with_uri("#{Loaded::HOST}#{ p }") 
     end
+
+    extend self
 end
 
 module Table
-    extend self
-    attr_accessor :detect_200, :detect_302, :detect_gool, :xcli_take, :xcli_write, :xerrors
-    @detect_200 = {} ; @detect_302 = {} ; @detect_gool = {} ; @xcli_take = {} ; @xcli_write = {} ; @xerrors = {}
-
+    ( ACCESSORS = [ :detect_200, :detect_302, :detect_gool, :xcli_take, :xcli_write, :xerrors ] ).map { |a|
+        attr_accessor :"#{a}" 
+        self.instance_variable_set( "@#{a}", {} )
+    }
     def gool k = :Detector
         self.detect_gool[ k ] 
     end 
-end
 
+    extend self
+end
 module Server
     module DtScavanger 
         scv_msg = {} 
         define_method :scavanger do |s| scv_msg[ s ] end
         define_method :set_msg do |s, v| scv_msg[ s ] = v end
+
         private
-        def scavange_gool; scavange end
+        def scavange_gool 
+            scavange 
+        end
         def scavange; self.em_respo && find_respo end
         def find_respo; DocumentResponse.new.finder self end
     end
@@ -62,7 +67,7 @@ end
 class DocumentResponse
     def finder dt, page = dt.em_page 
         get_finder.each_pair { |s, bl, str=nil| 
-                             ( dt.instance_eval &bl ) && ( str = site_gool( page, s ) )
+                               ( dt.instance_eval &bl ) && ( str = site_gool( page, s ) )
                              ( str ? dt.set_msg( s, str ) : false ) && ( Table.gool.call( Loaded.x_sym( s ) ) )
         } 
     end

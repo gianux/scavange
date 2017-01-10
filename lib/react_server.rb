@@ -8,11 +8,8 @@ module TriggerComponents
     end
 
     private
-    def _cmd_sed h, t, f, s = "sed -n '#{h},#{t} p' #{f}" 
-        ( `#{s}` ).split("\n") if (  ( h + t ) > 0 )
-    end
 
-    define_method :_cmd do _cmd_sed( head, tail, Param::FILENAME ) end
+    define_method :_cmd do Configs::Run._cmd_sed( head, tail, Configs::SITESFILE ) end
 
     define_method :set_clientmsg do |h, t| head = h ; tail = t ; ary = run_cmd  end
 

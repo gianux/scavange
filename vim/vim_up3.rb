@@ -12,7 +12,6 @@ start_rolling.rb
 start_xclient.rb
 start_detector.rb
 start_server_run.rb
-start_rinda_service.rb 
 ].inject { |s,rb| s += " lib/#{rb} " }
 
 puts FILE_RB

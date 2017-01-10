@@ -1,16 +1,19 @@
 require "drb/drb"
 
-require_relative "../lib/react_server.rb"
+require_relative "../lib/server.rb"
 
 module Monitorize
-    extend self
 
-    DRb.start_service 
+    DRb.start_service
+    ts = DRbObject.new_with_uri("#{Loaded::HOST}#{Loaded::MONITPORT}")
+
+    arr = Configs::Run._cmd_sed 1, 1000, Configs::WORDSFILE
+    Finder.set_words_list arr
 
     drb = Object
     drb.extend Server::DRbServerObj
 
-    ts = DRbObject.new_with_uri("#{Loaded::HOST}#{Loaded::MONITPORT}")
+
     tb_ = Loaded.ld_bases.keys.inject({}){ |t, k| t[ k.to_sym ] = drb.drb_base( k ) ; t }
     words = tb_.keys.inject([]) { |a, k| a << "#{k}".split("X").last ; a }
 
@@ -39,6 +42,8 @@ module Monitorize
     define_method :xxtrigger_pass_values do 
       tb_[ :BaseXtrigger ].write([ Loaded.ld_base( :BaseXtrigger )[:msg], "", "", "1" ]) 
     end
+
+    extend self
 end
 
 module Monitorize

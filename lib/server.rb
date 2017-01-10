@@ -27,7 +27,13 @@ module Server
     module DRbServerObj
         include XDRbServerObj
 
-        def port server, s = Loaded.ld_relation( server ), p = Loaded.ld_base( s )[:port]; p end
+        def port server, s = Loaded.ld_relation( server ), p = Loaded.ld_base( s )[:port] 
+            ( return Loaded::MONITPORT ) unless server.match /Base/
+            p 
+        end
+        def drb_base name, p = self.port( name )
+            uri p 
+        end
     end
     module MyName
         private
@@ -49,7 +55,7 @@ module Server
         include DRbServerObj, LoadTables
 
         def initialize _ = know_myname
-            @val = [] ; @tuple = [] ; @last = [] 
+            @val, @tuple, @last = Array.new(3) { [] }
             Table.init_tables( server ) { load_tables }
         end
     end
@@ -72,7 +78,6 @@ module Server
             end
         end
     end
-
     module CheckRollingParams
         include Server::CheckedAttributes
     

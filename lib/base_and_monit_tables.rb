@@ -1,26 +1,26 @@
 module Table
-    extend self
 
-    attr_accessor :counts, :reaction, :take, :write
+    ( accessors ||= [ :counts, :reaction, :take, :write ] ).map { |w| 
 
-    def init_tables xserver, h = helper { table( xserver ) }
+        attr_accessor :"#{w}"
+    }
+
+    def init_tables xserver, h = helper( xserver ) 
 
         ( Table.counts, Table.reaction, Table.take, Table.write ) = h
 
         yield if block_given?
     end
 
+
     private
 
-    def helper s = "", &block
-        empty_attrs.count.times { s += "block.call," } ; instance_eval "return #{s[0...-1]}"
+    define_method :helper do | x, t = {}, p = proc { [] } |
+
+        t[ x ] = p 
+
+        Array.new( accessors.count ) { t } 
     end
 
-    def table x, t = {}
-        t[ x ] = proc { [] } ; return t
-    end
-
-    def empty_attrs
-        [ @counts, @reaction, @take, @write ]
-    end
+    extend self
 end

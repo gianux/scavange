@@ -6,20 +6,18 @@ require_relative "../irb/monitorize.rb"
 require_relative "../lib/xclient.rb"
 require_relative "../lib/server_run.rb"
 
-module DtParams
+module ConstParams
     MSG = Loaded::DTMSG
     FLAG200 = true 
     FLAG302 = true 
     TPORTS = {:BaseX302=>33302, :BaseX200=>67890, :BaseXerr=>98989, :BaseXportuga=>11111}
-    FOLLOWDIRECTION = "https"
+    FDIRECTION = "https"
+end
+class Detector
+    include ConstParams
 end
 module Param
-    include DtParams
-    HEAD = 1 ; TAIL = 1 ; DIVI = 1 ; PORT = "99999" 
-    CLICONF = true
-    CONF200 = true
-    CONF302 = true
-    FILENAME = ( `pwd` ).chomp.concat("/file/alexa1M.txt")
+    XCLIENT = { divi: 1, head: 1, tail: 1, port: "99999", fdirection: "https" } 
 end
 
 require_relative "../lib/detector.rb"
