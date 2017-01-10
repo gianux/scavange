@@ -44,7 +44,11 @@ namespace :www do
         system "ps -ef|grep ruby"
     end
 
-    task :run100by10 do
+    task :scavate1M do
+        system "ruby lib/start_rolling.rb 1 1000000 3500 'file/alexa1M.txt' 'file/fwords.txt'"
+    end
+
+    task :scavate100by10 do
         system "ruby lib/start_rolling.rb 1 100 10 'file/alexa1M.txt' 'file/fwords.txt'"
     end
 end
